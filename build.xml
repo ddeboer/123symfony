@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="123Symfony">
+    <property name="web-user" value="www-data" />
+    <property name="permission-dirs" value="app/cache app/logs" />
+    <property name="log" location="build.log" />
 
     <target name="setup"
             description="Prepare Skeleton application for dev environment"
-            depends="check,install-composer,install-vendors" />
+            depends="check,set-permissions,install-composer,install-vendors" />
 
     <target name="check" description="Symfony2 requirements check">
         <exec executable="php">
             <arg line="app/check.php" />
+        </exec>
+    </target>
+
+    <target name="set-permissions" depends="chmod,setfacl"
+            description="Set cache and log directory permissions">
+    </target>
+
+    <target name="chmod">
+        <exec executable="whoami" outputproperty="whoami"/>
+        <echo>Trying to set permissions using chmod +a...</echo>
+        <exec executable="sudo" resultproperty="fail" output="${log}">
+            <arg line='chmod +a "${web-user} allow delete,write,append,file_inherit,directory_inherit" ${permission-dirs}' />
+        </exec>
+        <exec executable="sudo" resultproperty="fail">
+            <arg line='chmod +a "${whoami} allow delete,write,append,file_inherit,directory_inherit" ${permission-dirs}' />
+        </exec>
+    </target>
+
+    <target name="set-permissions-successful">
+        <condition property="permissions.fail">
+            <not>
+                <equals arg1="${fail}" arg2="0"></equals>
+            </not>
+        </condition>
+    </target>
+
+    <target name="setfacl" if="permissions.fail" depends="set-permissions-successful">
+        <echo>Setting permissions using setfacl instead</echo>
+        <exec executable="sudo" output="${log}">
+            <arg line="setfacl -R -m u:${web-user}:rwx -m u:${whoami}:rwx ${permission-dirs}" />
+        </exec>
+        <exec executable="sudo" output="${log}">
+            <arg line="sudo setfacl -dR -m u:${web-user}:rwx -m u:${whoami}:rwx ${permission-dirs}" />
         </exec>
     </target>
 
