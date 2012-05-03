@@ -18,12 +18,13 @@ Ant is required to set up the application. Install it
 Usage
 -----
 
-Download:
+1. Download:
 
-    $ git clone https://github.com/ddeboer/symfony-skeleton
+        $ git clone https://github.com/ddeboer/symfony-skeleton
 
-Set up:
 
-    $ ant setup
+2. Set up:
 
-Enjoy.
+        $ ant setup
+
+3. Enjoy.
