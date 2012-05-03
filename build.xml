@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="123Symfony">
+
+    <target name="setup"
+            description="Prepare Skeleton application for dev environment"
+            depends="check,install-composer,install-vendors" />
+
+    <target name="check" description="Symfony2 requirements check">
+        <exec executable="php">
+            <arg line="app/check.php" />
+        </exec>
+    </target>
+
+    <target name="install-composer" description="Install Composer (http://getcomposer.org)">
+        <exec executable="sh">
+            <arg line="-c 'curl -s http://getcomposer.org/installer | php'"/>
+        </exec>
+    </target>
+
+    <target name="install-vendors"
+            description="Install vendors using Composer">
+        <exec executable="php">
+            <arg line="composer.phar install" />
+        </exec>
+    </target>
+
+</project>
